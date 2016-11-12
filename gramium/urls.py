@@ -16,9 +16,24 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='Pastebin API')
+
 from core.urls import router
+
+from core.scaffolding import BookCrudManager # or from views import BookCrudManager depending on where you've put it
+book_crud = BookCrudManager()
+
+# [...] define your urlpatters here
+
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/',include(router.urls)),
+    url(r'^docs/', include('rest_framework_docs.urls')),
+    url(r'^rest/', schema_view)
 ]
+
+urlpatterns += book_crud.get_url_patterns()
