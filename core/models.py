@@ -14,6 +14,7 @@ class Group(models.Model):
     noc_bank_status_check  = models.CharField(default = "Not Verified", max_length=30)
     description = models.TextField(blank=True, null=True)
     group_purpose = models.CharField(max_length=300, blank=True, null=True)
+    send_sms_to_all_in_group = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -68,11 +69,20 @@ class Loan(models.Model):
     def __str__(self):
         return self.group.name
 
+
+    def add_months(self, sourcedate, months):
+        month = sourcedate.month - 1 + months
+        year = int(sourcedate.year + month / 12)
+        month = month % 12 + 1
+        day = min(sourcedate.day, calendar.monthrange(year, month)[1])
+        return datetime.date(year, month, day)
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.remaining_amount = self.principal
             self.remaining_installments = self.number_of_installments
-            self.due_date = self.date + timedelta(days=30)
+            # self.due_date = self.date + timedelta(days=30)
+            self.due_date = self.add_months(self.date, 1)
         super(Loan, self).save(*args, **kwargs)
 
 class Repayment(models.Model):
@@ -85,7 +95,7 @@ class Repayment(models.Model):
     def __str__(self):
         return  unicode(self.installment_number) +self.loan.group.name
 
-    def add_months(sourcedate, months):
+    def add_months(self, sourcedate, months):
         month = sourcedate.month - 1 + months
         year = int(sourcedate.year + month / 12)
         month = month % 12 + 1
@@ -95,9 +105,9 @@ class Repayment(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             print "Helo"
-            self.loan.remaining_amount = self.loan.remaining_amount - self.monthly_amount
+            self.loan.remaining_amount = self.loan.remaining_amount - self.amount_paid
             self.loan.remaining_installments = self.loan.remaining_installments - self.number_of_installments_paid
-            self.loan.due_date = self.add_months(self.loan.due_date + self.number_of_installments_paid)
+            self.loan.due_date = self.add_months(self.loan.due_date,self.number_of_installments_paid)
             if self.loan.remaining_installments <= 0 or self.loan.remaining_amount <= 0:
                 self.loan.is_active  = False
             self.loan.save()

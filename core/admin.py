@@ -27,25 +27,40 @@ class IdentityInline(admin.StackedInline):
     extra = 1
 
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ('name', 'village','phone')
+    list_display = ('name', 'street_name', 'village', 'phone')
     inlines = [IdentityInline, ]
 
-class LoanInline(admin.ModelAdmin):
-    list_display = ('get_group', 'village','phone')
+class LoanAdmin(admin.ModelAdmin):
+    list_display = ('get_group', 'principal','remaining_installments')
 
     def get_group(self, obj):
         return obj.group.name
 
     get_group.admin_order_field = 'name'  # Allows column order sorting
     get_group.short_description = 'Group Name'  # Renames column head
-    inlines = [IdentityInline, ]
 
-admin.site.register(Account, AccountAdmin)
+class RepaymentAdmin(admin.ModelAdmin):
+    list_display = ('get_group', 'get_principal','amount_paid','installment_number')
+
+    def get_group(self, obj):
+        return obj.loan.group.name
+
+    get_group.admin_order_field = 'name'  # Allows column order sorting
+    get_group.short_description = 'Group Name'  # Renames column head
+
+
+    def get_principal(self, obj):
+        return obj.loan.principal
+
+    get_principal.admin_order_field = 'principal'  # Allows column order sorting
+    get_principal.short_description = 'Loan Principal'  # Renames column head
+
+# admin.site.register(Account, AccountAdmin)
 admin.site.register(Group, GroupAdmin)
 # admin.site.register(Identity)
 admin.site.register(Member, MemberAdmin)
-admin.site.register(Loan)
-admin.site.register(Repayment)
+admin.site.register(Loan, LoanAdmin)
+admin.site.register(Repayment, RepaymentAdmin)
 
 admin.site.site_header = "Gramium"
 admin.site.site_title = "Admin | Gramium"

@@ -1,6 +1,6 @@
 # NGO Name - Gramium 
 
-## Hackthon Goal Micro Credit Program for the sustainable livelihood Through Income Generation Activities
+## Hackathon Goal Micro Credit Program for the sustainable livelihood Through Income Generation Activities
 
 ### Problem Statement
 
@@ -18,3 +18,17 @@
 * Nishant Gandhi
 * Sowmiya G
 * Soundarya T
+
+
+## Run these CRONs while deploying
+
+* 30 4 1 * * python [File] (main/SmsAppRunner.py)
+* 30 4 3 * * python [File] (main/SmsAppRunner.py)
+* 30 4 11 * * python [File] (main/SmsAppRunner.py)
+* 30 4 13 * * python [File] (main/SmsAppRunner.py)
+* 30 12 1 * * python [File] (main/VoiceAppRunner.py)
+* 30 12 3 * * python [File] (main/VoiceAppRunner.py)
+* 30 12 11 * * python [File] (main/VoiceAppRunner.py)
+* 30 12 13 * * python [File] (main/VoiceAppRunner.py)
+* 30 4 6 * * python [File] (main/SmsAppRunner.py)
+* 30 4 16 * * python [File] (main/SmsAppRunner.py)
