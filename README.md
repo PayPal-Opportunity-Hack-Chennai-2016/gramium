@@ -19,6 +19,17 @@
 * Sowmiya G
 * Soundarya T
 
+###Solution
+
+* A system capable of sending remainder notification to user about their Re-Payment details and maintain their Member - Group Relation, and trigger notification based on due payment.
+
+###Tech Stack
+
+* Django
+* MySQL
+* SMS Integration - Twilio (For basic test SMS and Voice Call, Looking for other platform to satisfy NGO's budjet)
+* 
+
 
 * Deployment URL http://139.59.34.186:8000/admin/
 
