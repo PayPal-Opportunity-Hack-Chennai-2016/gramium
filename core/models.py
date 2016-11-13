@@ -1,14 +1,19 @@
 from __future__ import unicode_literals
 
-from datetime import timedelta
+import calendar
+from datetime import timedelta, datetime
 from django.db import models
-
+import datetime
+import calendar
 # Create your models here.
 from django.db.models import Model
 
 
 class Group(models.Model):
-    name = models.CharField(max_length=35, db_index=True)
+    name = models.CharField(max_length=300, db_index=True)
+    noc_bank_status_check  = models.CharField(default = "Not Verified", max_length=30)
+    description = models.TextField(blank=True, null=True)
+    group_purpose = models.CharField(max_length=300, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -16,20 +21,23 @@ class Group(models.Model):
 class Account(models.Model):
     name = models.CharField(max_length=30)
     account_number = models.CharField(max_length=30)
-    bank = models.CharField(max_length=30)
-    branch = models.CharField(max_length=30)
+    bank = models.CharField(max_length=300)
+    branch = models.CharField(max_length=300)
     ifsc = models.CharField(max_length=30)
     account_type = models.CharField(max_length=30)
-    group = models.ForeignKey(to = "Group")
+    group = models.OneToOneField(to = "Group")
 
     def __str__(self):
         return self.name+self.bank
 
 class Member(models.Model):
-    name = models.CharField(max_length=200, db_index=True)
-    phone = models.CharField(max_length=200)
-    address1 = models.CharField(max_length=200)
-    address2 = models.CharField(max_length=200)
+    name = models.CharField(max_length=50, db_index=True)
+    phone = models.CharField(max_length=20)
+    door_no = models.CharField(max_length=10, blank=True, null=True)
+    street_name = models.CharField(max_length=50, blank=True, null=True)
+    village = models.CharField(max_length=50, blank=True, null=True)
+    district = models.CharField(max_length=30, blank=True, null=True)
+    pincode = models.CharField(max_length=10, blank=True, null=True)
     is_incharge = models.BooleanField(default=False)
     group  = models.ForeignKey(to="Group")
     is_active = models.BooleanField(default=True)
@@ -38,8 +46,8 @@ class Member(models.Model):
         return self.name
 
 class Identity(models.Model):
-    id_type = models.CharField(max_length=10)
-    number = models.CharField(max_length=10)
+    id_type = models.CharField(max_length=30)
+    number = models.CharField(max_length=30)
     member = models.ForeignKey(to="Member")
 
     def __str__(self):
@@ -68,20 +76,28 @@ class Loan(models.Model):
         super(Loan, self).save(*args, **kwargs)
 
 class Repayment(models.Model):
-    monthly_amount = models.DecimalField(decimal_places=2, max_digits=8)
+    amount_paid = models.DecimalField(decimal_places=2, max_digits=8)
     installment_number = models.IntegerField()
+    number_of_installments_paid = models.IntegerField()
     date_paid = models.DateField()
     loan = models.ForeignKey(to= "Loan")
 
     def __str__(self):
         return  unicode(self.installment_number) +self.loan.group.name
 
+    def add_months(sourcedate, months):
+        month = sourcedate.month - 1 + months
+        year = int(sourcedate.year + month / 12)
+        month = month % 12 + 1
+        day = min(sourcedate.day, calendar.monthrange(year, month)[1])
+        return datetime.date(year, month, day)
+
     def save(self, *args, **kwargs):
         if not self.pk:
             print "Helo"
             self.loan.remaining_amount = self.loan.remaining_amount - self.monthly_amount
-            self.loan.remaining_installments = self.loan.remaining_installments - 1
-            self.loan.due_date = self.loan.due_date + timedelta(days=30)
+            self.loan.remaining_installments = self.loan.remaining_installments - self.number_of_installments_paid
+            self.loan.due_date = self.add_months(self.loan.due_date + self.number_of_installments_paid)
             if self.loan.remaining_installments <= 0 or self.loan.remaining_amount <= 0:
                 self.loan.is_active  = False
             self.loan.save()

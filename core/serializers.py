@@ -37,5 +37,5 @@ class RepaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Repayment
-        fields = ('pk','monthly_amount','installment_number','date_paid')
+        fields = ('pk', 'amount_paid','installment_number','date_paid')
 
