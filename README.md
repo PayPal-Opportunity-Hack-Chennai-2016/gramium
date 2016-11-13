@@ -19,6 +19,7 @@
 * Sowmiya G
 * Soundarya T
 
+* Deployment URL http://139.59.34.186:8000/admin/
 
 ## Run these CRONs while deploying
 
@@ -32,3 +33,6 @@
 * 30 12 13 * * python [File] (main/VoiceAppRunner.py)
 * 30 4 6 * * python [File] (main/SmsAppRunner.py)
 * 30 4 16 * * python [File] (main/SmsAppRunner.py)
+
+
+#####[PPT Presentation](https://docs.google.com/presentation/d/17YpvNPo9SWsqYlcoxkVvAB_VjN263NfmuW3PNL4XhLc/edit?usp=sharing)
