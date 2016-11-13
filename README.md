@@ -23,7 +23,7 @@
 
 * A system capable of sending remainder notification to user about their Re-Payment details and maintain their Member - Group Relation, and trigger notification based on due payment.
 
-[High Level Diagram ](docs/Highlevel-Grahmium.jpg)
+![High Level Diagram ](docs/Highlevel-Grahmium.jpg)
 
 ###Tech Stack
 
